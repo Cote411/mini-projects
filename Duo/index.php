@@ -11,5 +11,6 @@ if (phpCAS::isAuthenticated()){
 }else{
   echo "<a href='./login.php'>Login</a>"; 
 }
+echo "this is some text";
 
 ?>
