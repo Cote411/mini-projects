@@ -14,3 +14,16 @@ if (phpCAS::isAuthenticated()){
 echo "this is some text";
 
 ?>
+
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Duo Security Login</title>
+  </head>
+  <body>
+    <h1>Duo Security Login</h1>
+    <button id="duo-login-button">Log in with Duo Security</button>
+    
+  </body>
+</html>
