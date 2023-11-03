@@ -97,7 +97,7 @@ class log10 extends Operation{
 
 class ln extends Operation{
   public function operate() {
-      return log($this->operand_1, M_E);
+      return log($this->operand_1);
   }
   public function getEquation(){
     return 'ln(' . $this->operand_1 . ') = ' . $this->operate();
