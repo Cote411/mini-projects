@@ -59,6 +59,95 @@ class Division extends Operation {
     return $this->operand_1 . ' / ' . $this->operand_2 . ' = ' . $this->operate();
 }
 
+class square_root extends Operation{
+    public function operate() {
+        return sqrt($this->operand_1);
+    }
+    public function getEquation() {
+        return 'sqrt(' . $this->operand_1 . ') = ' . $this->operate();
+    }
+}
+
+class squared extends Operation{
+    public function operate() {
+        return $this->operand_1 * $this->operand_1;
+    }
+    public function getEquation() {
+        return $this->operand_1 . '^2 = ' . $this->operate();
+    }
+}
+
+class power extends Operation{
+  public function operate() {
+      return pow($this->operand_1, $this->operand_2);
+  }
+  public function getEquation(){
+    return $this->operand_1 . '^' . $this->operand_2 . ' = ' . $this->operate();
+  }
+}
+
+class log10 extends Operation{
+  public function operate() {
+      return log10($this->operand_1);
+  }
+  public function getEquation(){
+    return 'log10(' . $this->operand_1 . ') = ' . $this->operate();
+  }
+}
+
+class ln extends Operation{
+  public function operate() {
+      return log($this->operand_1, M_E);
+  }
+  public function getEquation(){
+    return 'ln(' . $this->operand_1 . ') = ' . $this->operate();
+  }
+}
+//10^x
+class ten_to_the_x extends Operation{
+  public function operate() {
+      return pow(10, $this->operand_1);
+  }
+  public function getEquation(){
+    return '10^' . $this->operand_1 . ' = ' . $this->operate();
+  }
+}
+//e^x
+class e_to_the_x extends Operation{
+  public function operate() {
+      return pow(M_E, $this->operand_1);
+  }
+  public function getEquation(){
+    return 'e^' . $this->operand_1 . ' = ' . $this->operate();
+  }
+}
+
+class sin extends Operation{
+  public function operate() {
+      return sin($this->operand_1);
+  }
+  public function getEquation(){
+    return 'sin(' . $this->operand_1 . ') = ' . $this->operate();
+  }
+}
+
+class cos extends Operation{
+  public function operate() {
+      return cos($this->operand_1);
+  }
+  public function getEquation(){
+    return 'cos(' . $this->operand_1 . ') = ' . $this->operate();
+  }
+}
+
+class tan extends Operation{
+  public function operate() {
+      return tan($this->operand_1);
+  }
+  public function getEquation(){
+    return 'tan(' . $this->operand_1 . ') = ' . $this->operate();
+  }
+}
 // Some debugs - uncomment these to see what is happening...
 // echo '$_POST print_r=>',print_r($_POST);
 // echo "<br>",'$_POST vardump=>',var_dump($_POST);
@@ -100,9 +189,40 @@ class Division extends Operation {
         $op = new Multiplication($o1, $o2);
       }
     }
-    if(isset($_POST['div']) && $_POST['div'] == 'Div') {
+    if(isset($_POST['divi']) && $_POST['divi'] == 'Div') {
         $op = new Division($o1, $o2);
     }
+    if(isset($_POST['sqrt']) && $_POST['sqrt'] == 'sqrt') {
+        $op = new square_root($o1, $o2);
+    }
+    if(isset($_POST['squared']) && $_POST['squared'] == 'squared') {
+        $op = new squared($o1, $o2);
+    }
+    if(isset($_POST['power']) && $_POST['power'] == 'power') {
+        $op = new power($o1, $o2);
+    }
+    if(isset($_POST['log10']) && $_POST['log10'] == 'log10') {
+        $op = new log10($o1, $o2);
+    }
+    if(isset($_POST['ln']) && $_POST['ln'] == 'ln') {
+        $op = new ln($o1, $o2);
+    }
+    if(isset($_POST['ten_to_the_x']) && $_POST['ten_to_the_x'] == 'ten_to_the_x') {
+        $op = new ten_to_the_x($o1, $o2);
+    }
+    if(isset($_POST['e_to_the_x']) && $_POST['e_to_the_x'] == 'e_to_the_x') {
+        $op = new e_to_the_x($o1, $o2);
+    }
+    if(isset($_POST['sin']) && $_POST['sin'] == 'sin') {
+        $op = new sin($o1, $o2);
+    }
+    if(isset($_POST['cos']) && $_POST['cos'] == 'cos') {
+        $op = new cos($o1, $o2);
+    }
+    if(isset($_POST['tan']) && $_POST['tan'] == 'tan') {
+        $op = new tan($o1, $o2);
+    }
+
   
   }catch (Exception $e) {
     $err[] = $e->getMessage();
@@ -139,7 +259,17 @@ class Division extends Operation {
     <input type="submit" name="add" value="Add" />  
     <input type="submit" name="sub" value="Subtract" />  
     <input type="submit" name="mult" value="Multiply" />  
-    <input type="submit" name="divi" value="Divide" />  
+    <input type="submit" name="divi" value="Divide" /> 
+    <input type="submit" name="squared" value="Square" /> 
+    <input type="submit" name="sqrt" value="Square Root" />
+    <input type="submit" name="power" value="Power" />
+    <input type="submit" name="log10" value="Log10" />
+    <input type="submit" name="ln" value="ln" />
+    <input type="submit" name="ten_to_the_x" value="10^x" />
+    <input type="submit" name="e_to_the_x" value="e^x" />
+    <input type="submit" name="sin" value="sin" />
+    <input type="submit" name="cos" value="cos" />
+    <input type="submit" name="tan" value="tan"/>
   </form>
 </body>
 </html>
