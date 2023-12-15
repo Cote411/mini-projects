@@ -1,0 +1,1254 @@
+<html lang="en-US" data-theme="dark" data-black_mode="">
+  <head>
+    <title>Submini Polls - Csci2500: Computer Organization</title>
+    <link rel="shortcut icon" href="https://submitty.cs.rpi.edu/img/favicon.ico" type="image/x-icon">
+    <link rel="manifest" href="https://submitty.cs.rpi.edu//manifest.json?v=1684263267">
+    <script type="module" src="https://submitty.cs.rpi.edu//sw.js?v=1684263267"></script>
+    <script>
+      window.baseUrl = "https://submitty.cs.rpi.edu/";
+      window.courseUrl = "https://submitty.cs.rpi.edu/courses/f23/csci2500";
+      window.csrfToken = "ec730ab2f3eb7743df9290db611a9cba";
+      window.websocketPort = 8443;
+      
+      if ("serviceWorker" in navigator) {
+          window.addEventListener("load", () => {
+              navigator.serviceWorker
+                  .register("https://submitty.cs.rpi.edu//sw.js?v=1684263267")
+                  .then(res => console.log("service worker registered"))
+                  .catch(err => console.log("service worker not registered", err))
+          })
+      }
+    </script>
+    <link rel="stylesheet" type="text/css" href="https://submitty.cs.rpi.edu/vendor/fontawesome/css/all.min.css?v=1702152833">
+    <link rel="stylesheet" type="text/css" href="https://submitty.cs.rpi.edu/css/google/inconsolata.css?v=1684263267">
+    <link rel="stylesheet" type="text/css" href="https://submitty.cs.rpi.edu/css/google/pt_sans.css?v=1684263267">
+    <link rel="stylesheet" type="text/css" href="https://submitty.cs.rpi.edu/css/google/source_sans_pro.css?v=1684263267">
+    <link rel="stylesheet" type="text/css" href="https://submitty.cs.rpi.edu/vendor/jquery-ui/jquery-ui.min.css?v=1702152833">
+    <link rel="stylesheet" type="text/css" href="https://submitty.cs.rpi.edu/vendor/bootstrap/css/bootstrap-grid.min.css?v=1702152833">
+    <link rel="stylesheet" type="text/css" href="https://submitty.cs.rpi.edu/css/colors.css?v=1697906062">
+    <link rel="stylesheet" type="text/css" href="https://submitty.cs.rpi.edu/css/server.css?v=1702152110">
+    <link rel="stylesheet" type="text/css" href="https://submitty.cs.rpi.edu/css/global.css?v=1684263267">
+    <link rel="stylesheet" type="text/css" href="https://submitty.cs.rpi.edu/css/menu.css?v=1684263267">
+    <link rel="stylesheet" type="text/css" href="https://submitty.cs.rpi.edu/css/sidebar.css?v=1684263267">
+    <link rel="stylesheet" type="text/css" href="https://submitty.cs.rpi.edu/css/bootstrap.css?v=1697906062">
+    <link rel="stylesheet" type="text/css" href="https://submitty.cs.rpi.edu/css/diff-viewer.css?v=1697906062">
+    <link rel="stylesheet" type="text/css" href="https://submitty.cs.rpi.edu/css/glyphicons-halflings.css?v=1684263267">
+    <link rel="stylesheet" type="text/css" href="https://submitty.cs.rpi.edu/css/markdown.css?v=1702152110">
+    <link rel="stylesheet" type="text/css" href="https://submitty.cs.rpi.edu/css/polls.css?v=1684263267">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://submitty.cs.rpi.edu/vendor/jquery/jquery.min.js?v=1702152833"></script>
+    <script src="https://submitty.cs.rpi.edu/vendor/jquery-ui/jquery-ui.min.js?v=1702152833"></script>
+    <script src="https://submitty.cs.rpi.edu/vendor/js-cookie/js.cookie.min.js?v=1702152833"></script>
+    <script src="https://submitty.cs.rpi.edu/vendor/luxon/luxon.min.js?v=1702152833"></script>
+    <script src="https://submitty.cs.rpi.edu/js/diff-viewer.js?v=1684263267"></script>
+    <script src="https://submitty.cs.rpi.edu/js/server.js?v=1702469928"></script>
+    <script src="https://submitty.cs.rpi.edu/js/menu.js?v=1684263267"></script>
+    <script src="https://submitty.cs.rpi.edu/js/testcase-output.js?v=1684263267"></script>
+    <script src="https://submitty.cs.rpi.edu/js/polls.js?v=1698035123"></script>
+    <script>
+      function ducky() {
+          var duck = document.getElementById("duckdiv");
+          var banner = document.getElementById("submitty-banner");
+          banner.style.display = "block";
+          document.getElementById('moorthy-duck').onclick = null;
+          var pos = 5;
+          var id = setInterval(frame, 5);
+          function frame() {
+              if (screen.width - pos <= -350) {
+                  clearInterval(id);
+                  banner.style.display = "none";
+                  duck.style.right = -280 + 'px';
+      
+                  resetDriver();
+              }
+              else {
+                pos++;
+                duck.style.right = pos + 'px';
+              }
+          }
+      }
+      
+      function resetDriver(){
+          var duck = document.getElementById("duckdiv");
+          var pos = -280;
+      
+          var id = setInterval(reset, 5);
+      
+          // all done! bring the ducky home
+          function reset(){
+              if (duck.style.right === '0px'){
+                  clearInterval(id);
+                  document.getElementById('moorthy-duck').onclick = function(){ducky();}
+              }
+              else {
+                  pos++;
+                  duck.style.right = pos + 'px';
+              }
+          }
+      }
+      
+      var onAjaxInit;
+      
+      
+      //determines if the user has a set theme
+      function detectColorScheme(){
+          document.documentElement.setAttribute("data-theme", "");
+          document.documentElement.setAttribute("data-black_mode", "");
+          let theme="light";    //default to light
+          //local storage is used to override OS theme settings
+          if(localStorage.getItem("theme")){
+              if(localStorage.getItem("theme") === "dark"){
+                  theme = "dark";
+              }
+          } else if(!window.matchMedia) {
+              //matchMedia method not supported
+              return false;
+          } else if(window.matchMedia("(prefers-color-scheme: dark)").matches) {
+              //OS theme setting detected as dark
+              theme = "dark";
+          }
+          //dark theme preferred, set document with a `data-theme` attribute
+          if (theme === "dark") {
+               document.documentElement.setAttribute("data-theme", "dark");
+               if(localStorage.getItem("black_mode") === "black"){
+                 document.documentElement.setAttribute("data-black_mode", "black");
+               }
+          }
+      }
+      detectColorScheme();
+    </script>
+  </head>
+  <body data-base-url="https://submitty.cs.rpi.edu/" data-course-url="https://submitty.cs.rpi.edu/courses/f23/csci2500" data-csrf-token="ec730ab2f3eb7743df9290db611a9cba" onload="if (onAjaxInit) { onAjaxInit(); }" data-user-tz-off="-05:00">
+    <a id="skip-nav" class="skip-btn" href="#main">Skip to main content</a>
+    <div id="submitty-body" class="flex-col">
+      <div id="mobile-menu">
+        <div id="menu-header" class="flex-row">
+          <a href="https://submitty.cs.rpi.edu/" aria-label="Go to Submitty Home"><span class="mobile-title">Submitty</span></a>
+          <button id="menu-exit"><span class="screen-reader">Close Menu</span><i class="fas fa-times"></i></button>
+        </div>
+        <ul>
+          <li>
+            <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500" title="Gradeables" class="flex-row nav-row" id="mobile-nav-sidebar-submitty">
+            <span class="flex-line">                                                     <i class="fa fas fa-star"></i>
+            <span class="icon-title"> Gradeables </span>
+            </span>
+            </a>
+          </li>
+          <li>
+            <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/notifications" title="Notifications" class="flex-row nav-row" id="mobile-nav-sidebar-notifications">
+            <span class="flex-line">                                                     <i class="fa fa-bell"></i>
+            <span class="icon-title"> Notifications </span>
+            </span>
+            </a>
+          </li>
+          <li>
+            <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/office_hours_queue" title="Office Hours Queue" class="flex-row nav-row" id="mobile-nav-sidebar-queue">
+            <span class="flex-line">                                                     <i class="fa fa-door-open"></i>
+            <span class="icon-title"> Office Hours Queue </span>
+            </span>
+            </a>
+          </li>
+          <li>
+            <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls" title="Submini Polls" class="flex-row nav-row selected" id="mobile-nav-sidebar-polls">
+            <span class="flex-line">                                                     <i class="fa fa-question-circle"></i>
+            <span class="icon-title"> Submini Polls </span>
+            </span>
+            </a>
+          </li>
+          <li>
+            <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/course_materials" title="Course Materials" class="flex-row nav-row" id="mobile-nav-sidebar-course-materials">
+            <span class="flex-line">                                                     <i class="fa fa-file"></i>
+            <span class="icon-title"> Course Materials </span>
+            </span>
+            </a>
+          </li>
+          <li>
+            <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/forum" title="Discussion Forum" class="flex-row nav-row" id="mobile-nav-sidebar-forum">
+            <span class="flex-line">                                                     <i class="fa fa-comments"></i>
+            <span class="icon-title"> Discussion Forum </span>
+            </span>
+            </a>
+          </li>
+          <li>
+            <hr>
+          </li>
+          <li>
+            <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/grades" title="Rainbow Grades" class="flex-row nav-row" id="mobile-nav-sidebar-grades">
+            <span class="flex-line">                                                     <i class="fa fa-chart-line"></i>
+            <span class="icon-title"> Rainbow Grades </span>
+            </span>
+            </a>
+          </li>
+          <li>
+            <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/late_table" title="My Late Days/Extensions" class="flex-row nav-row" id="mobile-nav-sidebar-late-days">
+            <span class="flex-line">                                                     <i class="fa fa-calendar"></i>
+            <span class="icon-title"> My Late Days/Extensions </span>
+            </span>
+            </a>
+          </li>
+          <li>
+            <hr>
+          </li>
+          <li>
+            <a href="https://submitty.cs.rpi.edu/home" title="My Courses" class="flex-row nav-row" id="mobile-nav-sidebar-my-courses">
+            <span class="flex-line">                                                     <i class="fa fa-book-reader"></i>
+            <span class="icon-title"> My Courses </span>
+            </span>
+            </a>
+          </li>
+          <li>
+            <a href="https://submitty.cs.rpi.edu/user_profile" title="My Profile" class="flex-row nav-row" id="mobile-nav-sidebar-my-profile">
+            <span class="flex-line">                                                     <i class="fa fa-user"></i>
+            <span class="icon-title"> My Profile </span>
+            </span>
+            </a>
+          </li>
+          <li>
+            <a href="https://submitty.cs.rpi.edu/calendar" title="Calendar" class="flex-row nav-row" id="mobile-nav-sidebar-calendar">
+            <span class="flex-line">                                                     <i class="fa fa-calendar"></i>
+            <span class="icon-title"> Calendar </span>
+            </span>
+            </a>
+          </li>
+          <li>
+            <hr>
+          </li>
+          <li>
+            <a href="https://submitty.cs.rpi.edu/authentication/logout" title="Logout Alex" class="flex-row nav-row" id="mobile-logout">
+            <span class="flex-line">                                                     <i class="fa fa-power-off"></i>
+            <span class="icon-title"> Logout Alex </span>
+            </span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div id="menu-overlay"></div>
+      <nav class="flex-row shadow">
+        <div id="nav-links">
+          <a id="home-button" class="black-btn" href="" aria-label="Go to Submitty Home">
+          <img id="submitty-mascot-home-btn" src="https://submitty.cs.rpi.edu//img/moorthy_duck/12-December.svg" alt="Moorthy - Submitty's Duck Mascot!" height="60">
+          </a>
+          <div id="breadcrumbs">
+            <div class="breadcrumb">
+              <span>RPI Computer Science</span>
+              <a class="external-breadcrumb" href="https://science.rpi.edu/computer-science" target="_blank" aria-label="Go to RPI Computer Science"><i class="fas fa-external-link-alt"></i></a>
+            </div>
+            <span class="centered-icon">
+            <i class="fas fa-angle-right"></i>
+            </span>
+            <div class="breadcrumb">
+              <a href="https://submitty.cs.rpi.edu/">Submitty</a>
+            </div>
+            <span class="centered-icon">
+            <i class="fas fa-angle-right"></i>
+            </span>
+            <div class="breadcrumb">
+              <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500">Computer Organization</a>
+            </div>
+            <span class="centered-icon">
+            <i class="fas fa-angle-right"></i>
+            </span>
+            <div class="breadcrumb">
+              <span>Submini Polls</span>
+            </div>
+          </div>
+        </div>
+        <div style="display: flex">
+          <span id="duckdiv" style="position: relative">
+          <a id="duck-desktop" href="http://submitty.org/developer/rcos_moorthy" target="_blank" aria-label="Learn more about Moorthy">
+          <img id="moorthy-duck" src="https://submitty.cs.rpi.edu//img/moorthy_duck/12-December.svg" alt="Moorthy - Submitty's Duck Mascot!" height="80">
+          </a>
+          </span>
+          <span>
+          <a class="flex-col" id="logo-box" href="http://submitty.org" target="_blank" aria-label="Visit submitty dot org">
+          <img id="logo-submitty" src="https://submitty.cs.rpi.edu//img/submitty_logo.png" alt="Submitty Logo">
+          <img id="logo-submitty-light" src="https://submitty.cs.rpi.edu//img/submitty_logo_white.png" alt="Submitty Logo">
+          </a>
+          </span>
+        </div>
+        <button id="menu-button" class="black-btn">
+        MENU
+        </button>
+      </nav>
+      <noscript class="system-message danger">
+        You must have JavaScript enabled for Submitty to function properly. Please re-enable it when browsing this site.
+      </noscript>
+      <div class="system-message warning" id="socket-server-system-message" hidden="">
+        Warning: Failed to connect to websocket server. This page will not dynamically update.
+        Manually reload this page to see updates.        
+      </div>
+      <div class="system-message warning" id="performance-warning-system-message" style="display: none;">
+        <span id="performance-warning-system-message-text"></span>
+        <i id="close-performance-warning-system-message" class="fa fa-times" style="padding: 4px; cursor: pointer;"></i>
+      </div>
+      <div id="messages">
+        <!-- If the below <div> definition changes, update the design in server.js in displayMessage function -->
+      </div>
+      <div id="wrapper">
+        <aside data-testid="sidebar" class="">
+          <ul>
+            <li>
+              <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500" title="Gradeables" class="flex-row nav-row" id="nav-sidebar-submitty" data-toggle="tooltip">
+              <span class="flex-line">                                                     <i class="fa fas fa-star"></i>
+              <span class="icon-title"> Gradeables </span>
+              </span>
+              </a>
+            </li>
+            <li>
+              <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/notifications" title="Notifications" class="flex-row nav-row" id="nav-sidebar-notifications" data-toggle="tooltip">
+              <span class="flex-line">                                                     <i class="fa fa-bell"></i>
+              <span class="icon-title"> Notifications </span>
+              </span>
+              </a>
+            </li>
+            <li>
+              <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/office_hours_queue" title="Office Hours Queue" class="flex-row nav-row" id="nav-sidebar-queue" data-toggle="tooltip">
+              <span class="flex-line">                                                     <i class="fa fa-door-open"></i>
+              <span class="icon-title"> Office Hours Queue </span>
+              </span>
+              </a>
+            </li>
+            <li>
+              <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls" title="Submini Polls" class="flex-row nav-row selected" id="nav-sidebar-polls" data-toggle="tooltip">
+              <span class="flex-line">                                                     <i class="fa fa-question-circle"></i>
+              <span class="icon-title"> Submini Polls </span>
+              </span>
+              </a>
+            </li>
+            <li>
+              <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/course_materials" title="Course Materials" class="flex-row nav-row" id="nav-sidebar-course-materials" data-toggle="tooltip">
+              <span class="flex-line">                                                     <i class="fa fa-file"></i>
+              <span class="icon-title"> Course Materials </span>
+              </span>
+              </a>
+            </li>
+            <li>
+              <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/forum" title="Discussion Forum" class="flex-row nav-row" id="nav-sidebar-forum" data-toggle="tooltip">
+              <span class="flex-line">                                                     <i class="fa fa-comments"></i>
+              <span class="icon-title"> Discussion Forum </span>
+              </span>
+              </a>
+            </li>
+            <li>
+              <hr>
+            </li>
+            <li>
+              <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/grades" title="Rainbow Grades" class="flex-row nav-row" id="nav-sidebar-grades" data-toggle="tooltip">
+              <span class="flex-line">                                                     <i class="fa fa-chart-line"></i>
+              <span class="icon-title"> Rainbow Grades </span>
+              </span>
+              </a>
+            </li>
+            <li>
+              <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/late_table" title="My Late Days/Extensions" class="flex-row nav-row" id="nav-sidebar-late-days" data-toggle="tooltip">
+              <span class="flex-line">                                                     <i class="fa fa-calendar"></i>
+              <span class="icon-title"> My Late Days/Extensions </span>
+              </span>
+              </a>
+            </li>
+            <li>
+              <hr>
+            </li>
+            <li>
+              <a href="https://submitty.cs.rpi.edu/home" title="My Courses" class="flex-row nav-row" id="nav-sidebar-my-courses" data-toggle="tooltip">
+              <span class="flex-line">                                                     <i class="fa fa-book-reader"></i>
+              <span class="icon-title"> My Courses </span>
+              </span>
+              </a>
+            </li>
+            <li>
+              <a href="https://submitty.cs.rpi.edu/user_profile" title="My Profile" class="flex-row nav-row" id="nav-sidebar-my-profile" data-toggle="tooltip">
+              <span class="flex-line">                                                     <i class="fa fa-user"></i>
+              <span class="icon-title"> My Profile </span>
+              </span>
+              </a>
+            </li>
+            <li>
+              <a href="https://submitty.cs.rpi.edu/calendar" title="Calendar" class="flex-row nav-row" id="nav-sidebar-calendar" data-toggle="tooltip">
+              <span class="flex-line">                                                     <i class="fa fa-calendar"></i>
+              <span class="icon-title"> Calendar </span>
+              </span>
+              </a>
+            </li>
+            <li>
+              <hr>
+            </li>
+            <li>
+              <a href="javascript: toggleSidebar();" title="Collapse Sidebar" class="flex-row nav-row" id="nav-sidebar-collapse-sidebar" data-toggle="tooltip">
+              <span class="flex-line">                                                     <i class="fa fa-bars"></i>
+              <span class="icon-title"> Collapse Sidebar </span>
+              </span>
+              </a>
+            </li>
+            <li>
+              <a href="https://submitty.cs.rpi.edu/authentication/logout" title="Logout Alex" class="flex-row nav-row" id="logout" data-toggle="tooltip">
+              <span class="flex-line">                                                     <i class="fa fa-power-off"></i>
+              <span class="icon-title"> Logout Alex </span>
+              </span>
+              </a>
+            </li>
+          </ul>
+        </aside>
+        <main id="main">
+          <div class="content">
+            <h1> Polls </h1>
+            <hr>
+            <div class="dropdown-wrapper">
+              <div class="dropdown-bar">
+                <h2> Today's Polls </h2>
+                <div class="dropdown-btn">
+                  <i class="fa fa-chevron-down"></i>
+                </div>
+              </div>
+              <table id="today-table" class="table table-striped" style="width:100%;">
+                <colgroup>
+                  <col style="width: 40%">
+                  <col style="width: 35%">
+                  <col style="width: 25%">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Your Answer</th>
+                    <th scope="col">View Poll</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+              <hr>
+            </div>
+            <div class="dropdown-wrapper">
+              <div class="dropdown-bar">
+                <h2> Older Polls </h2>
+                <div class="dropdown-btn">
+                  <i class="fa fa-chevron-down"></i>
+                </div>
+              </div>
+              <table id="older-table" class="table table-striped" style="width:100%;">
+                <colgroup>
+                  <col style="width: 40%">
+                  <col style="width: 35%">
+                  <col style="width: 25%">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Your Answer</th>
+                    <th scope="col">View Poll</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="text-align: left"> Incentive for completing course evaluations </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>"Drop the lowest homework and implement test score adjustment" as the incentive. E.g., we drop one lowest homework grade when participation rate reaches 60%. When participation rate reaches 90% we implement the test score adjustment described in option #1 in addition to dropping one lowest homework score., "Test score adjustment" as the incentive, if the participation rate is 60% or better.</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/56">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="56">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 01, poll 01 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>C#, PHP, JavaScript, Swift, C++, Java, SQL, Python</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/1">
+                      <input type="" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="1">
+                      </a><a style="color:inherit ;  ">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 02, poll 01 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>Code successfully compiles and runs, printing <code class="inline-code">-nan</code>.</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/2">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="2">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 03, poll 01 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/3">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="3">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 03, poll 02 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/4">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="4">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 03, poll 03 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/5">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="5">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 04, poll 01 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/6">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="6">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 04, poll 02 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/7">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="7">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 04, poll 03 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>zsh</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/8">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="8">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 04, poll 04 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/9">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="9">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 04, poll 05 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/10">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="10">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 05, poll 01 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/11">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="11">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 05, poll 02 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p><code class="inline-code">dr-x------</code></p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/12">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="12">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 06, poll 01 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/13">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="13">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 06, poll 02 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/14">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="14">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 07, poll 01 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/18">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="18">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 07, poll 02 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/16">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="16">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 07, poll 03 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/15">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="15">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lab 05 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/19">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="19">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 08, poll 01 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/20">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="20">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 08, poll 02 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/17">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="17">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 09, poll 01 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/21">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="21">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 09, poll 02 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/22">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="22">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 10, poll 01 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/23">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="23">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 10, poll 02 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/24">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="24">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 11, poll 03 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/25">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="25">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 11, poll 04 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/26">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="26">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 11, poll 05 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/27">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="27">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 11, poll 06 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/28">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="28">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 12, poll 01 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/29">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="29">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 12, poll 02 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/30">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="30">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 13, poll 01 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/31">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="31">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 13, poll 02 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/32">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="32">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 14, poll 01 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/33">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="33">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 14, poll 02 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/34">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="34">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 14, poll 03 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/35">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="35">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 15, poll 01 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/36">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="36">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Homework 2 progress </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/41">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="41">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 16, poll 01 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/37">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="37">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 17, poll 01 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/38">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="38">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 18, poll 01 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/39">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="39">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 18, poll 02 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/40">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="40">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 20, poll 01 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>5</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/42">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="42">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 20, poll 02 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/43">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="43">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 20, poll 03 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/44">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="44">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 20, poll 04 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/45">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="45">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 21, poll 01 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/46">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="46">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 21, poll 02 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/47">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="47">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 24, poll 01 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/51">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="51">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 24, poll 02 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>18</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/52">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="52">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 24, poll 03 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>63%</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/53">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="53">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 24, poll 04 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>True</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/54">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="54">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 24, poll 05 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>All of the above</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/55">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="55">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 25, poll 01 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/48">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="48">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 25, poll 02 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/49">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="49">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="text-align: left"> Lecture 25, poll 03 </td>
+                    <td style="text-align: left">
+                      <div class="markdown " style="">
+                        <p>No Response</p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="https://submitty.cs.rpi.edu/courses/f23/csci2500/polls/50">
+                      <input type="hidden" name="csrf_token" value="ec730ab2f3eb7743df9290db611a9cba">
+                      <input type="hidden" name="poll_id" value="50">
+                      </a><a style="color:inherit ; pointer-events: none ; cursor: default ;">Closed</a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </main>
+      </div>
+      <footer>
+        © 2023
+        <a href="https://submitty.org" target="_blank" class="black-btn">Submitty</a>
+        <a href="https://github.com/Submitty/Submitty/releases/tag/v23.12.02" target="_blank" title="v23.12.02 123129813" class="black-btn">v23.12.02</a>
+        <span class="footer-separator">|</span> <a href="https://github.com/Submitty/Submitty" target="_blank" title="Visit our GitHub" aria-label="Visit our GitHub" class="black-btn"><i class="fab fa-github fa-lg"></i></a>
+        <span class="footer-separator">|</span> <a href="https://rcos.io" target="_blank" class="black-btn">An RCOS project</a>
+      </footer>
+    </div>
+    <div role="log" aria-live="assertive" aria-relevant="additions" class="ui-helper-hidden-accessible"></div>
+    <div role="log" aria-live="assertive" aria-relevant="additions" class="ui-helper-hidden-accessible"></div>
+    <div role="log" aria-live="assertive" aria-relevant="additions" class="ui-helper-hidden-accessible"></div>
+    <div role="log" aria-live="assertive" aria-relevant="additions" class="ui-helper-hidden-accessible"></div>
+    <div role="log" aria-live="assertive" aria-relevant="additions" class="ui-helper-hidden-accessible"></div>
+    <div role="log" aria-live="assertive" aria-relevant="additions" class="ui-helper-hidden-accessible"></div>
+    <div role="log" aria-live="assertive" aria-relevant="additions" class="ui-helper-hidden-accessible"></div>
+    <div role="log" aria-live="assertive" aria-relevant="additions" class="ui-helper-hidden-accessible"></div>
+    <div role="log" aria-live="assertive" aria-relevant="additions" class="ui-helper-hidden-accessible"></div>
+    <div role="log" aria-live="assertive" aria-relevant="additions" class="ui-helper-hidden-accessible"></div>
+    <div role="log" aria-live="assertive" aria-relevant="additions" class="ui-helper-hidden-accessible"></div>
+    <div role="log" aria-live="assertive" aria-relevant="additions" class="ui-helper-hidden-accessible"></div>
+    <div role="log" aria-live="assertive" aria-relevant="additions" class="ui-helper-hidden-accessible"></div>
+  </body>
+</html>
